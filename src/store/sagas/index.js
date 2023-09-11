@@ -1,0 +1,31 @@
+import { all, call, spawn } from 'redux-saga/effects';
+import { dogSaga } from './dog.saga';
+
+function errorHandler(error) {
+  console.log(error);
+}
+
+const spawnSagasList = (sagasList) =>
+  sagasList.map(({ saga, errorHandler }) =>
+    spawn(function* s() {
+      while (true) {
+        try {
+          yield call(saga);
+          break;
+        } catch (e) {
+          yield* errorHandler(e);
+        }
+      }
+    })
+  );
+
+export default function* rootSaga() {
+  const sagaList = [
+    {
+      dogSaga: dogSaga,
+      errorHandler: errorHandler,
+    },
+  ];
+
+  yield all(spawnSagasList(sagaList));
+}
