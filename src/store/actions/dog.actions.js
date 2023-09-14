@@ -19,5 +19,3 @@ export const MATCH_DOG_FAILURE = 'MATCH_DOG_FAILURE';
 export const fetchBreedsRequest = () => ({ type: FETCH_BREEDS_REQUEST });
 export const fetchBreedsSuccess = (breeds) => ({ type: FETCH_BREEDS_SUCCESS, breeds });
 export const fetchBreedsFailure = (error) => ({ type: FETCH_BREEDS_FAILURE, error });
-
-// Repeat similar patterns for other actions...

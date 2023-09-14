@@ -18,7 +18,8 @@ function* fetchBreedsSaga() {
 
 // Define other sagas for different actions...
 
-export function* dogSaga() {
+export default function* () {
+
   yield takeLatest(FETCH_BREEDS_REQUEST, fetchBreedsSaga);
   // Add other watchers here...
 }

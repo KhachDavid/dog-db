@@ -1,5 +1,6 @@
 import { all, call, spawn } from 'redux-saga/effects';
-import { dogSaga } from './dog.saga';
+import dogSaga from './dog.saga';
+import authSaga from './auth.saga';
 
 function errorHandler(error) {
   console.log(error);
@@ -21,10 +22,8 @@ const spawnSagasList = (sagasList) =>
 
 export default function* rootSaga() {
   const sagaList = [
-    {
-      dogSaga: dogSaga,
-      errorHandler: errorHandler,
-    },
+    { saga: authSaga, errorHandler },
+    { saga: dogSaga, errorHandler },
   ];
 
   yield all(spawnSagasList(sagaList));
