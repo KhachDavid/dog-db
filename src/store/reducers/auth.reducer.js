@@ -6,12 +6,16 @@ import {
     LOGOUT_REQUEST,
     LOGOUT_SUCCESS,
     LOGOUT_FAILURE,
+    SET_FULL_NAME,
+    SET_EMAIL,
   } from "../actions/auth.actions";
   
   const initialState = {
     user: null,
     loading: false,
     error: null,
+    currentName: "",
+    currentEmail: "",
   };
   
   const authReducer = (state = initialState, action) => {
@@ -42,6 +46,17 @@ import {
           user: null,
           loading: false,
         };
+      case SET_FULL_NAME:
+        return {
+          ...state,
+          currentName: action.payload,
+        };
+      case SET_EMAIL:
+        return {
+          ...state,
+          currentEmail: action.payload,
+        };
+
       default:
         return state;
     }

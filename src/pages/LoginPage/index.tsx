@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { loginRequest } from "../../store/actions/auth.actions";
-import { selectUser } from "../../store/sagas/selectors";
+import CustomTextField from "../../components/CustomTextField";
+import { useFormRecipe } from "./constants";
 
 interface LoginPageProps {
   setAuthenticated: (value: boolean) => void;
@@ -9,23 +10,11 @@ interface LoginPageProps {
 
 const LoginPage: React.FC<LoginPageProps> = ({ setAuthenticated }) => {
   const dispatch = useDispatch();
-  const user = useSelector(selectUser);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-  });
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  const user = useSelector((state: any) => state.auth.user);
 
   const handleLogin = () => {
     // Dispatch the login action with user's data
-    dispatch(loginRequest(formData.name, formData.email));
+    dispatch(loginRequest());
   };
 
   // Assuming you have logic to handle user state changes
@@ -35,32 +24,28 @@ const LoginPage: React.FC<LoginPageProps> = ({ setAuthenticated }) => {
     }
   }, [user, setAuthenticated]);
 
+  const formRecipe = useFormRecipe();
+
   return (
     <div>
       <h1>Login Page</h1>
       <form>
-        <div>
-          <label>
-            Name:
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
+        {formRecipe.map((recipe) => {
+          return (
+            <CustomTextField
+              key={recipe.className}
+              className={recipe.className}
+              name={recipe.name}
+              id={recipe.id}
+              label={recipe.label}
+              type={recipe.type}
+              value={recipe.value}
+              setValue={recipe.setValue}
+              error={recipe.error}
+              helperText={recipe.helperText}
             />
-          </label>
-        </div>
-        <div>
-          <label>
-            Email:
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-            />
-          </label>
-        </div>
+          )}
+        )}
         <button type="button" onClick={handleLogin}>
           Login
         </button>

@@ -1,5 +1,5 @@
 // auth.saga.js
-import { takeLatest, call, put } from 'redux-saga/effects';
+import { takeLatest, call, put, select } from 'redux-saga/effects';
 import {
   LOGIN_REQUEST,
   loginSuccess,
@@ -9,13 +9,29 @@ import {
   logoutFailure,
 } from '../actions/auth.actions';
 import * as AuthAPI from '../../api/auth.api';
+import { selectCurrentEmail, selectCurrentName } from './selectors';
 
 // Worker Saga for login
-function* login(action) {
+function* login() {
   try {
+
+    // select name and email
+    const name = yield select(selectCurrentName);
+    const email = yield select(selectCurrentEmail);
+
     // Call your API function for login
-    const response = yield call(AuthAPI.login, action.payload);
-    
+    const response = yield call(AuthAPI.login, { name, email });
+
+    // parse response status
+    const { status } = response;
+
+    // Check if response is OK
+    if (status !== 200) {
+        // Dispatch a failure action with the error
+        yield put(loginFailure(response));
+        return;
+    }
+
     // Dispatch a success action
     yield put(loginSuccess());
   } catch (error) {
