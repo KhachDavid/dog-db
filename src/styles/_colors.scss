@@ -1,22 +1,23 @@
 // All colors are defined here
-
 $text-color-light: rgb(117, 113, 113);
 $text-color-dark: rgb(63, 61, 61);
-$home-background: #efefef;
+$home-background: rgb(239, 239, 239);
 $error-color: rgb(255, 0, 0);
-$theme: #ff9900;
-$card-color: #fff;
-$submit-green: #00a400;
-$submit-green-hover: #008000;
+$theme: rgb(255, 153, 0);
+$card-color: rgb(255, 255, 255);
+$submit-green: rgb(0, 164, 0);
+$submit-green-hover: rgb(0, 128, 0);
+$disabled-color: rgb(192, 192, 192);
 
 // Exported to be used in React components
 :export {
-    textColorLight: $text-color-light;
-    textColorDark: $text-color-dark;
+    cardColor: $card-color;
+    disabledColor: $disabled-color;
+    errorColor: $error-color;
     homeBackground: $home-background;
     submitGreen: $submit-green;
     submitGreenHover: $submit-green-hover;
-    errorColor: $error-color;
-    cardColor: $card-color;
+    textColorDark: $text-color-dark;
+    textColorLight: $text-color-light;
     theme: $theme;
 }

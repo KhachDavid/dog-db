@@ -7,6 +7,9 @@
  * the email is considered invalid if it is not an empty string and does not contain an @ symbol
  */
 export const isEmailValid = (email) => {
-    if (email === "") return true;
-    return email.includes("@") && email.length > 1 && email.includes(".");
-  };
+  if (email === "") {
+    return true;
+  }
+  const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+  return emailRegex.test(email); // Replace with the email to be validated
+};

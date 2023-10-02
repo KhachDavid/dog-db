@@ -3,6 +3,13 @@
 
 $width: 35vw;
 
+.body {
+  display: flex;
+  justify-content: center; // Horizontally center children
+  align-items: center; // Vertically center children
+  height: 100vh; // Optionally, set a height to center vertically within the viewport
+}
+
 // Exported to be used in React components
 :export {
   width: $width;

@@ -3,18 +3,20 @@ import { endpoints } from './endpoints';
 
 const BASE_URL = endpoints.main;
 
+const axiosInstance = axios.create({ withCredentials: true });
+
 export const fetchBreeds = () => {
-  return axios.get(`${BASE_URL}${endpoints.dogs.breeds}`);
+  return axiosInstance.get(`${BASE_URL}${endpoints.dogs.breeds}`);
 };
 
 export const searchDogs = (queryParams) => {
-  return axios.get(`${BASE_URL}${endpoints.dogs.search}`, { params: queryParams });
+  return axiosInstance.get(`${BASE_URL}${endpoints.dogs.search}`, { params: queryParams });
 };
 
 export const fetchDogsByIds = (dogIds) => {
-  return axios.post(`${BASE_URL}${endpoints.dogs.post}`, dogIds);
+  return axiosInstance.post(`${BASE_URL}${endpoints.dogs.post}`, dogIds);
 };
 
 export const matchDog = (dogIds) => {
-  return axios.post(`${BASE_URL}${endpoints.dogs.match}`, dogIds);
+  return axiosInstance.post(`${BASE_URL}${endpoints.dogs.match}`, dogIds);
 };

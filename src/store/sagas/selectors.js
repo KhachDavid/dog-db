@@ -19,3 +19,11 @@ export const selectCurrentEmail = (state) => state.auth.currentEmail;
 // Create a selector to get the language from the language slice
 export const selectLanguage = (state) => state.language.language;
 
+// Create a selector to get the dog breeds
+export const selectBreeds = (state) => state.dog.breeds
+
+// Create a selector to get the dog ids
+export const selectDogIds = (state) => state.dog.dogIds
+
+// Create a selector to get the dogs
+export const selectDogs = (state) => state.dog.dogs

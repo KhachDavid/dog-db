@@ -18,7 +18,8 @@ function* login() {
     // select name and email
     const name = yield select(selectCurrentName);
     const email = yield select(selectCurrentEmail);
-
+    const user = { name, email, timestamp: new Date().getTime()}
+    
     // Call your API function for login
     const response = yield call(AuthAPI.login, { name, email });
 
@@ -33,7 +34,7 @@ function* login() {
     }
 
     // Dispatch a success action
-    yield put(loginSuccess());
+    yield put(loginSuccess({ user: user }));
   } catch (error) {
     // Dispatch a failure action with the error
     yield put(loginFailure(error));
