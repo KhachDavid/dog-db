@@ -1,5 +1,6 @@
 import React from "react";
 import CustomButton from "../CustomButton";
+import { theme } from "../../styles/_styles.scss";
 
 interface CustomPaginationProps {
   page: number;
@@ -36,7 +37,14 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
             px: "24px",
             m: "8px",
             borderRadius: "8px",
+            borderColor: theme,
             backgroundColor: "#fff",
+            color: theme,
+            "&:hover": {
+                backgroundColor: theme,
+                color: "#fff",
+                borderColor: "#fff",
+              },
           }}
           label="&lt;&lt;"
         />
@@ -52,7 +60,14 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
             px: "24px",
             m: "8px",
             borderRadius: "8px",
-            backgroundColor: pageNumber === page ? "#3f51b5" : "#fff",
+            borderColor: theme,
+            backgroundColor: pageNumber === page ? theme : "#fff",
+            color: pageNumber === page ? "#fff" : theme,
+            "&:hover": {
+                backgroundColor: theme,
+                color: "#fff",
+                borderColor: "#fff",
+              },
           }}
           label={pageNumber.toString()}
         />
@@ -67,7 +82,14 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
             px: "24px",
             m: "8px",
             borderRadius: "8px",
+            borderColor: theme,
             backgroundColor: "#fff",
+            color: theme,
+            "&:hover": {
+                backgroundColor: theme,
+                color: "#fff",
+                borderColor: "#fff",
+              },
           }}
           label="&gt;&gt;"
         />

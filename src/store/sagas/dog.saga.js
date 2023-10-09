@@ -40,9 +40,9 @@ function* fetchBreedsSaga() {
   }
 }
 
-function* searchDogsSaga() {
+function* searchDogsSaga(action) {
   try {
-    const response = yield call(api.searchDogs, {});
+    const response = yield call(api.searchDogs, action.queryParams);
 
     // parse response status
     const { status } = response;
@@ -60,6 +60,10 @@ function* searchDogsSaga() {
     }
   } catch (error) {
     yield put(searchDogsFailure(error));
+    if (error.response.status === 401) {
+      // if no longer authorized, log the user out
+      yield put(logoutSuccess());
+    } 
   }
 }
 

@@ -4,10 +4,49 @@
   height: 100%;
 }
 
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+
+  .modal-body {
+    background-color: white;
+  }
+}
+
+.filter-container {
+  display: flex;
+  justify-content: center; /* This will push the children to the left and right edges */
+  align-items: center; /* Vertically center the children */
+  padding: 1rem 0;
+
+  .left-side {
+    flex: 1; /* Distribute available space equally between left and right */
+    display: flex;
+    align-items: center; /* Vertically center the content */
+  }
+
+  .right-side {
+    flex: 1; /* Distribute available space equally between left and right */
+    display: flex;
+    align-items: center; /* Vertically center the content */
+    flex-direction: row-reverse;
+  }
+}
+
 .content-container {
   flex-grow: 1;
   display: flex;
   width: 100%;
+  flex-direction: column;
 }
 
 .table-container {

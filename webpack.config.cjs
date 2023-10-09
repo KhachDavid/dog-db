@@ -43,6 +43,15 @@ module.exports = {
           // loader for favicon and json and png
         ],
       },
+      {
+        test: /\.(jpg|jpeg|png|gif|svg)$/,
+        use: {
+          loader: 'file-loader',
+          options: {
+            name: 'images/[name].[ext]', // Output path and filename format
+          },
+        },
+      },
     ],
   },
   resolve: {

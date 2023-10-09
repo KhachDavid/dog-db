@@ -20,10 +20,22 @@ export const selectCurrentEmail = (state) => state.auth.currentEmail;
 export const selectLanguage = (state) => state.language.language;
 
 // Create a selector to get the dog breeds
-export const selectBreeds = (state) => state.dog.breeds
+export const selectBreeds = (state) => state.dog.breeds;
 
 // Create a selector to get the dog ids
-export const selectDogIds = (state) => state.dog.dogIds
+export const selectDogIds = (state) => state.dog.dogIds;
 
 // Create a selector to get the dogs
-export const selectDogs = (state) => state.dog.dogs
+export const selectDogs = (state) => state.dog.dogs;
+
+// Create a selector to get the total amount of dogs
+export const selectDogCount = (state) => state.dog.total;
+
+// Create a selector to get the next endopoint to get the next page
+export const selectNextDogs = (state) => state.dog.next;
+
+// Create a selector to get the next endopoint to get the previous page
+export const selectPrevDogs = (state) => state.dog.prev;
+
+// Create a selecter to get the dog location details
+export const selectLocationDetails = (state) => state.location.locations;

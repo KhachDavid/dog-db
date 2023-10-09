@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { endpoints } from './endpoints';
+import { dogBatchCount } from '../constants/dog.constants';
 
 const BASE_URL = endpoints.main;
 
@@ -10,6 +11,9 @@ export const fetchBreeds = () => {
 };
 
 export const searchDogs = (queryParams) => {
+  //queryParams.sort = "breed:asc";
+  queryParams.size = dogBatchCount;
+
   return axiosInstance.get(`${BASE_URL}${endpoints.dogs.search}`, { params: queryParams });
 };
 

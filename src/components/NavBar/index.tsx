@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { AppBar, Toolbar, Typography, Button } from "@mui/material";
+import { AppBar, Toolbar, Box, Button } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { loginRequest, logoutRequest } from "../../store/actions/auth.actions";
 import { styled } from "@mui/material/styles";
@@ -29,10 +29,9 @@ const Navbar = () => {
   return (
     <StyledAppBar>
       <Toolbar>
-        <DogAnimation/>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          Dog Database
-        </Typography>
+        <Box sx={{ flexGrow: 1 }}>
+          <DogAnimation/>
+        </Box>
         {user ? (
           <Button color="inherit" onClick={handleLogout}>
             Logout

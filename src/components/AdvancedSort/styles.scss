@@ -1,0 +1,12 @@
+.left-side {
+  flex: 1; /* Distribute available space equally between left and right */
+  display: flex;
+  align-items: center; /* Vertically center the content */
+  gap: 0.5rem;
+}
+.right-side {
+  flex: 1; /* Distribute available space equally between left and right */
+  display: flex;
+  align-items: center; /* Vertically center the content */
+  flex-direction: row-reverse;
+}

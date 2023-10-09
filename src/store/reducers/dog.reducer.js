@@ -14,6 +14,9 @@ const initialState = {
   dogs: [],
   dogIds: [],
   breeds: [],
+  total: "",
+  next: "",
+  prev: "",
   loading: false,
   error: null,
 };
@@ -33,7 +36,15 @@ const dogReducer = (state = initialState, action) => {
       return { ...state, loading: true, error: null };
 
     case SEARCH_DOGS_SUCCESS:
-      return { ...state, dogIds: action.dogs.resultIds, loading: false, error: null };
+      return {
+        ...state,
+        dogIds: action.dogs.resultIds,
+        total: action.dogs.total,
+        next: action.dogs.next,
+        prev: action.dogs.prev,
+        loading: false,
+        error: null,
+      };
 
     case SEARCH_DOGS_FAILURE:
       return { ...state, loading: false, error: action.error };
@@ -41,10 +52,10 @@ const dogReducer = (state = initialState, action) => {
     case FETCH_DOGS_REQUEST:
       return { ...state, loading: true, error: null };
 
-    case FETCH_DOGS_SUCCESS: 
+    case FETCH_DOGS_SUCCESS:
       return { ...state, dogs: action.dogs, loading: false, error: null };
 
-    case FETCH_DOGS_FAILURE: 
+    case FETCH_DOGS_FAILURE:
       return { ...state, loading: false, error: action.error };
 
     default:
