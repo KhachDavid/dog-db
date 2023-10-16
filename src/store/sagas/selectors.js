@@ -28,6 +28,9 @@ export const selectDogIds = (state) => state.dog.dogIds;
 // Create a selector to get the dogs
 export const selectDogs = (state) => state.dog.dogs;
 
+// Create a selector to get if the dogs are cached
+export const selectDogsCached = (state) => state.dog.cached;
+
 // Create a selector to get the total amount of dogs
 export const selectDogCount = (state) => state.dog.total;
 
@@ -39,3 +42,9 @@ export const selectPrevDogs = (state) => state.dog.prev;
 
 // Create a selecter to get the dog location details
 export const selectLocationDetails = (state) => state.location.locations;
+
+// Create a selector to get the additional locations
+export const selectAdditionalLocations = (state) => state.location.additionalLocations;
+
+// Create a selector to get the cities for selected states
+export const selectStateCities = (state) => state.location.stateCities;

@@ -1,4 +1,4 @@
-export const dogBatchCount = 12;
+export const dogBatchCount = 20;
 
 export const menuItems = [
   { value: "nameLowToHigh", label: "Name: Low to High", icon: "ArrowUpward" },

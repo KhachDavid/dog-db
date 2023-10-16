@@ -1,9 +1,17 @@
 import axios from 'axios';
 import { endpoints } from './endpoints';
+import { zipCodeFromLocationSize } from '../constants/location.constants';
 
 const BASE_URL = endpoints.main;
 
-const axiosInstance = axios.create({ withCredentials: true });
+const axiosInstance = axios.create({
+  withCredentials: true,
+  headers: {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET,POST",
+    "Content-Type": "application/json",
+  },
+});
 
 export const fetchLocations = (zipCodes) => {
   if (!Array.isArray(zipCodes) || zipCodes.length > 100) {
@@ -14,5 +22,6 @@ export const fetchLocations = (zipCodes) => {
 };
 
 export const searchLocations = (queryParams) => {
+  queryParams.size = zipCodeFromLocationSize;
   return axiosInstance.post(`${BASE_URL}${endpoints.locations.search}`, queryParams);
 };

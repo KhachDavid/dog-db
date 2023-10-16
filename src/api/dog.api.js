@@ -1,20 +1,29 @@
-import axios from 'axios';
-import { endpoints } from './endpoints';
-import { dogBatchCount } from '../constants/dog.constants';
+import axios from "axios";
+import { endpoints } from "./endpoints";
+import { dogBatchCount } from "../constants/dog.constants";
 
 const BASE_URL = endpoints.main;
 
-const axiosInstance = axios.create({ withCredentials: true });
+const axiosInstance = axios.create({
+  withCredentials: true,
+  headers: {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET,POST",
+    "Content-Type": "application/json",
+  },
+});
 
 export const fetchBreeds = () => {
   return axiosInstance.get(`${BASE_URL}${endpoints.dogs.breeds}`);
 };
 
-export const searchDogs = (queryParams) => {
+export const searchDogs = (queryParams, thisDogBatchCount = dogBatchCount) => {
   //queryParams.sort = "breed:asc";
-  queryParams.size = dogBatchCount;
+  queryParams.size = thisDogBatchCount;
 
-  return axiosInstance.get(`${BASE_URL}${endpoints.dogs.search}`, { params: queryParams });
+  return axiosInstance.get(`${BASE_URL}${endpoints.dogs.search}`, {
+    params: queryParams,
+  });
 };
 
 export const fetchDogsByIds = (dogIds) => {
