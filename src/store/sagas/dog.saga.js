@@ -94,11 +94,10 @@ function* searchDogsSaga(action) {
           } else {
             // before starting a new batch
             // fill up any spots left in the last batch
-            const initialDataLength = initialData.resultIds.length
-            const spotsToFillUp = dogBatchCount - initialDataLength;
+            const spotsToFillUp = dogBatchCount - newResultIds.length;
 
             for (let i = 0; i < spotsToFillUp; i++) {
-              initialData.resultIds.push(newResultIds.pop());
+              newResultIds.push(initialData.resultIds.pop());
             }
 
             let newHead = {

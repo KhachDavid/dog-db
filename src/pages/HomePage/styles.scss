@@ -153,3 +153,7 @@
     display: block;
   }
 }
+
+.blurry-bg {
+  backdrop-filter: blur(10px); /* Adjust the blur strength as needed */
+}

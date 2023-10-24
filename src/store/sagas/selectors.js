@@ -48,3 +48,11 @@ export const selectAdditionalLocations = (state) => state.location.additionalLoc
 
 // Create a selector to get the cities for selected states
 export const selectStateCities = (state) => state.location.stateCities;
+
+// Create a selector for getting selected cities and selected states
+export const selectStates = (state) => state.location.selectedStates;
+export const selectCities = (state) => state.location.selectedCities;
+export const selectCityStates = (state) => state.location.selectedCityStates;
+
+// Create a selector to know if location search is loading
+export const isLoadingNewLocation = (state) => state.location.loading;

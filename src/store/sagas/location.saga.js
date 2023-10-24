@@ -1,5 +1,9 @@
 import { put, call, takeLatest, select } from "redux-saga/effects";
-import { selectAdditionalLocations, selectStateCities } from "./selectors";
+import {
+  selectAdditionalLocations,
+  selectStateCities,
+  selectCities,
+} from "./selectors";
 import {
   SEARCH_LOCATIONS_REQUEST,
   FETCH_LOCATIONS_REQUEST,
@@ -13,37 +17,73 @@ import {
   REMOVE_AUTOCOMPLETE_CITIES_REQUEST,
   getAutocompleteCitiesSuccess,
   removeAutocompleteCitiesSuccess,
+  cachedStateLocations,
+  searchLocationsFailure,
 } from "../actions/location.actions";
 
 import { logoutSuccess } from "../actions/auth.actions";
 
 import * as api from "../../api/location.api";
-import { cityAutocompleteLimit } from "../../constants/location.constants";
+import {
+  cityAutocompleteLimit,
+  mapStatesToAbbr,
+} from "../../constants/location.constants";
 import { dogsNotCached } from "../actions/dog.actions";
 
 function* searchLocationsSaga(action) {
   try {
     const response = yield call(api.searchLocations, action.payload);
     const additionalLocations = yield select(selectAdditionalLocations);
-    const newData = response.data.results;
-    let filteredResults = additionalLocations;
-    if (action.payload.states && action.payload.city) {
-      let state = action.payload.states[0];
-      filteredResults = additionalLocations.filter(
-        (res) => res.state !== state
-      );
+
+    if (response.status !== 200) {
+      yield put(searchLocationsFailure("Failed to retrieve locations"));
+      return;
     }
 
-    yield put(searchLocationsSuccess([...newData, ...filteredResults]));
+    let newData = response.data.results;
+    let filteredResults = additionalLocations;
+    if (action.payload.states && action.payload.city) {
+      newData = newData.filter((obj) => obj.city === action.payload.city);
+
+      // case when we are searching for a city in a state
+      let currentCities = yield select(selectCities) || [];
+      // if it is the first city search filter previous state searches
+      if (currentCities.length === 1) {
+        let state = action.payload.states[0];
+        filteredResults = additionalLocations.filter(
+          (res) => res.state !== state
+        );
+      }
+    } else if (action.payload.states && !action.payload.city) {
+      // case when we are just searching for state
+      yield put(cachedStateLocations(action.payload.states[0], newData));
+    } else if (!action.payload.states && action.payload.city) {
+      // this means the user only searches for a city
+      // in this case we put cities to stateCities as an autocomplete option
+      const uniqueValues = [
+        ...new Set(
+          newData.map((resultObj) => `${resultObj.city}, ${resultObj.state}`)
+        ),
+      ];
+      yield put(getAutocompleteCitiesSuccess(uniqueValues));
+      return;
+    }
+
+    yield put(
+      searchLocationsSuccess(alternateConcat(newData, filteredResults))
+    );
     yield put(dogsNotCached());
   } catch (error) {
-    console.log(error);
+    const { status } = error.response;
+    if (status === 401) {
+      yield put(logoutSuccess());
+    }
   }
 }
 
 /**
  * Called by CardView to get the city name of the dog zip code
- * @param {} action 
+ * @param {} action
  */
 function* fetchLocationsSaga(action) {
   try {
@@ -118,9 +158,41 @@ function* getAutocompleteCitiesSaga(action) {
 function* removeAutocompleteCitiesSaga(action) {
   const currentCities = yield select(selectStateCities);
   const state = action.payload;
-  const filteredCities = currentCities.filter((city) => !city.endsWith(state));
+  const filteredCities = currentCities.filter(
+    (city) => !city.endsWith(mapStatesToAbbr(state))
+  );
 
   yield put(removeAutocompleteCitiesSuccess(filteredCities));
+}
+
+function alternateConcat(newData, oldData) {
+  const result = [];
+  const newLength = newData.length;
+  const oldLength = oldData.length;
+  const repetitions = Math.ceil(newLength / 3); // Repeat old data after every 3 new data
+
+  for (let i = 0; i < repetitions; i++) {
+    const newStart = i * 3;
+    const newEnd = Math.min(newStart + 3, newLength);
+    const oldStart = i * 3;
+
+    // Add the new data in chunks of 3 (or less if it's the last repetition).
+    for (let j = newStart; j < newEnd; j++) {
+      result.push(newData[j]);
+    }
+
+    // Add old data if available.
+    if (oldStart < oldLength) {
+      result.push(oldData[oldStart]);
+    }
+  }
+
+  // Add any remaining old data after all the repetitions.
+  for (let i = repetitions * 3; i < oldLength; i++) {
+    result.push(oldData[i]);
+  }
+
+  return result;
 }
 
 export default function* () {

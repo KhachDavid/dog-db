@@ -6,6 +6,7 @@ import Box from "@mui/material/Box";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import { TextFieldSX } from "../CustomTextField/style";
+import CustomSnackbar from "../CustomSnackbar";
 import { Tooltip } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import "./styles.scss";
@@ -15,7 +16,11 @@ import {
   mapStatesToAbbr,
   stateFullNames,
 } from "../../constants/location.constants";
-import { getAutocompleteCities, removeAutocompleteCities } from "../../store/actions/location.actions";
+import {
+  getAutocompleteCities,
+  removeAutocompleteCities,
+  searchLocationsRequest,
+} from "../../store/actions/location.actions";
 import { selectStateCities } from "../../store/sagas/selectors";
 
 interface AutocompleteSearchProps {
@@ -28,6 +33,8 @@ interface AutocompleteSearchProps {
   onCityChange: (arg0: string[], arg1: "add" | "remove") => void;
 }
 
+const tagStack = [];
+
 const AutocompleteSearch: React.FC<AutocompleteSearchProps> = ({
   dogBreeds,
   selectedBreeds,
@@ -39,12 +46,18 @@ const AutocompleteSearch: React.FC<AutocompleteSearchProps> = ({
 }) => {
   const dispatch = useDispatch();
   const [inputValue, setInputValue] = useState<string>("");
+
   const stateCities = useSelector(selectStateCities);
+
+  // Snackbar
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
 
   const handleTagSelection = (event, newValue) => {
     // don't let the user select tags with the keyboard
     // to avoid rapid api calls
     if (event?.key === "Backspace") {
+      alert("Back")
       return;
     }
 
@@ -52,8 +65,20 @@ const AutocompleteSearch: React.FC<AutocompleteSearchProps> = ({
     if (dogBreeds.includes(newVal)) {
       onBreedChange(newVal, "add");
     } else if (USstates.some((x) => x.toLowerCase() === newVal.toLowerCase())) {
+      if (selectedStates.length === 5) {
+        setMessage("Cannot select more than 5 states");
+        setOpen(true);
+        setTimeout(() => {
+          setOpen(false);
+          setMessage("");
+        }, 5000);
+        return;
+      }
       dispatch(
-        getAutocompleteCities({ states: [mapStatesToAbbr(newVal)], size: cityAutocompleteLimit })
+        getAutocompleteCities({
+          states: [mapStatesToAbbr(newVal)],
+          size: cityAutocompleteLimit,
+        })
       );
       onStatesChange(newVal, "add");
     } else if (/[a-zA-Z]/.test(newVal)) {
@@ -71,22 +96,48 @@ const AutocompleteSearch: React.FC<AutocompleteSearchProps> = ({
     } else if (
       selectedStates.some((x) => x.toLowerCase() === removedTag.toLowerCase())
     ) {
-      dispatch(
-        removeAutocompleteCities(removedTag)
-      );
+      dispatch(removeAutocompleteCities(removedTag));
       onStatesChange(removedTag, "remove");
     }
   };
 
   const handleInputChange = (event, newInputValue) => {
     if (event !== null) {
+      const updatedOptions = options.filter((option) =>
+        option.toLowerCase().includes(newInputValue.toLowerCase())
+      );
+
+      // if we have less than 5 options start searching the input as a city
+      if (updatedOptions.length < 5) {
+        dispatch(
+          searchLocationsRequest({
+            city: newInputValue,
+          })
+        );
+      }
+
       setInputValue(newInputValue);
     }
   };
 
-  const options = [...stateCities,  ...stateFullNames, ...dogBreeds ];
+  const value = selectedBreeds.concat(selectedCities, selectedStates);
+  const options = [...dogBreeds, ...stateCities, ...stateFullNames];
+
+  const renderNoOptions = () => {
+    if (inputValue.length === 0) {
+      // Do something when the input is empty
+      return "Start typing to see options";
+    } else {
+      return "Looking for more options...";
+    }
+  };
+
   const isOptionEqualToValue = (option, value) => {
-    if (selectedBreeds.includes(option)) {
+    if (
+      selectedBreeds.includes(option) ||
+      selectedStates.includes(option) ||
+      selectedCities.includes(option)
+    ) {
       return true;
     }
     return option === value;
@@ -95,7 +146,6 @@ const AutocompleteSearch: React.FC<AutocompleteSearchProps> = ({
   return (
     <Box display="flex" flexDirection="row" alignItems="center">
       <Box mt={2}></Box>
-      <Tooltip title="Select states to see cities" placement="right">
       <Autocomplete
         clearOnBlur={false} // Prevent Autocomplete from clearing input on blur
         multiple
@@ -106,13 +156,10 @@ const AutocompleteSearch: React.FC<AutocompleteSearchProps> = ({
         isOptionEqualToValue={isOptionEqualToValue}
         getOptionLabel={(option) => option}
         onChange={handleTagSelection}
-        value={selectedBreeds.concat(
-          selectedCities,
-          selectedStates,
-        )}
+        value={value}
         renderTags={(value, getTagProps) => {
           const numTags = value.length;
-          const limitTags = 3;
+          const limitTags = 5;
           const shrunkValues = value.slice(limitTags, value.length);
 
           return (
@@ -151,6 +198,7 @@ const AutocompleteSearch: React.FC<AutocompleteSearchProps> = ({
             style={{ width: "300px" }}
           />
         )}
+        noOptionsText={renderNoOptions()}
         renderOption={(props, option) => {
           const belongsToDogBreeds = dogBreeds.includes(option);
           const belongsToStateFullNames = stateFullNames.includes(option);
@@ -190,9 +238,15 @@ const AutocompleteSearch: React.FC<AutocompleteSearchProps> = ({
             </li>
           );
         }}
-        disableClearable
+        
       />
-      </Tooltip>
+      <div>
+        <CustomSnackbar
+          open={open}
+          message={message}
+          handleClose={() => setOpen(false)}
+        />
+      </div>
     </Box>
   );
 };

@@ -17,6 +17,9 @@ import {
   selectNextDogs,
   selectPrevDogs,
   selectDogsCached,
+  selectStates,
+  selectCities,
+  isLoadingNewLocation,
 } from "../../store/sagas/selectors";
 import CustomPagination from "../../components/CustomPagination";
 import CustomSearch from "../../components/CustomSearch";
@@ -26,16 +29,21 @@ import CardView from "../../components/CardView";
 import { dogBatchCount } from "../../constants/dog.constants";
 import AdvancedSort from "../../components/AdvancedSort";
 import {
+  addCity,
+  addState,
   removeCityZipCodes,
+  removeState,
   removeStateZipCodes,
+  removecity,
+  resetAllLocations,
   searchLocationsRequest,
 } from "../../store/actions/location.actions";
 import { mapStatesToAbbr } from "../../constants/location.constants";
 import { Typography } from "@mui/material";
 
 /**
- * 
- * @returns 
+ *
+ * @returns
  */
 const HomePage: React.FC = () => {
   const dispatch = useDispatch();
@@ -47,21 +55,22 @@ const HomePage: React.FC = () => {
   const nextDogs = useSelector(selectNextDogs);
   const prevDogs = useSelector(selectPrevDogs);
   const cachedDogs = useSelector(selectDogsCached);
+  const selectedCities = useSelector(selectCities);
+  const selectedStates = useSelector(selectStates);
+  const isLoading = useSelector(isLoadingNewLocation);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedSort, setSelectedSort] = useState<string>("breed:asc");
   const [selectedBreeds, setSelectedBreeds] = useState<string[]>([]);
-  const [selectedCities, setSelectedCities] = useState<string[]>([]);
-  const [selectedStates, setSelectedStates] = useState<string[]>([]);
   const [rerenderKey, setRerenderKey] = useState(0); // Initialize a state variable for triggering a re-render
 
   // Create refs to store the previous values of dependencies
-  const prevSelectedBreeds = useRef(selectedBreeds);
   const prevSelectedSort = useRef(selectedSort);
   const prevAdditionalLocations = useRef(selectAdditionalLocations);
+  const prevSelectedBreeds = useRef(selectedBreeds);
 
   /**
-   * 
+   *
    */
   useEffect(() => {
     // Dispatch the action when the component first loads
@@ -70,21 +79,23 @@ const HomePage: React.FC = () => {
   }, [dispatch]);
 
   /**
-   * 
+   *
    */
   useEffect(() => {
+    console.log(isLoading);
     // this is because nextDogs is not already cached
     if (selectedSort !== prevSelectedSort.current && cachedDogs) {
       dispatch(manualDogSort(selectedSort));
       setRerenderKey((prevKey) => prevKey + 1);
     } else if (
       !cachedDogs ||
-      selectedBreeds.length !== prevSelectedBreeds.current.length || 
-      additionalLocations.length !== prevAdditionalLocations.current.length 
+      selectedBreeds.length !== prevSelectedBreeds.current.length ||
+      additionalLocations.length !== prevAdditionalLocations.current.length
     ) {
-      const extraLocations = additionalLocations.map(
-        (resultObj) => resultObj.zip_code
-      );
+      const extraLocations =
+        additionalLocations.length > 0
+          ? additionalLocations.map((resultObj) => resultObj.zip_code)
+          : [];
 
       dispatch(
         searchDogsRequest({
@@ -107,7 +118,6 @@ const HomePage: React.FC = () => {
     if (additionalLocations.length !== prevAdditionalLocations.current.length) {
       prevAdditionalLocations.current = additionalLocations;
     }
-
   }, [
     currentPage,
     dispatch,
@@ -119,16 +129,16 @@ const HomePage: React.FC = () => {
   ]);
 
   /**
-   * 
+   *
    */
   useEffect(() => {
     dispatch(fetchDogsRequest());
   }, [dispatch, dogID]);
 
   /**
-   * 
-   * @param newBreed 
-   * @param action 
+   *
+   * @param newBreed
+   * @param action
    */
   const handleBreedChange = (newBreed, action) => {
     switch (action) {
@@ -148,40 +158,31 @@ const HomePage: React.FC = () => {
   };
 
   /**
-   * 
-   * @param newCity 
-   * @param action 
-   * @returns 
+   *
+   * @param newCity
+   * @param action
+   * @returns
    */
   const handleCityChange = (newCity, action) => {
     setCurrentPage(1);
 
     const cityDetails = newCity.split(",");
-
-    if (cityDetails.length !== 2) {
-      console.error(`Invalid city ${newCity}`);
-      return;
-    }
-
     const city = cityDetails[0];
-    const state = cityDetails[1].replace(/\s+/g, "");
+    const state = cityDetails[1]?.replace(/\s+/g, "");
     switch (action) {
       case "add":
         setCurrentPage(1);
+        dispatch(addCity(city, state));
         dispatch(
           searchLocationsRequest({
             city: city,
             states: [state],
           })
         );
-        setSelectedCities([...selectedCities, newCity]);
         break;
       case "remove":
         setCurrentPage(1);
-        setSelectedCities((prevData) =>
-          prevData.filter((item) => item !== newCity)
-        );
-        dispatch(removeCityZipCodes(city));
+        dispatch(removecity(newCity));
         break;
 
       default:
@@ -190,41 +191,25 @@ const HomePage: React.FC = () => {
   };
 
   /**
-   * 
-   * @param newState 
-   * @param action 
+   *
+   * @param newState
+   * @param action
    */
   const handleStateChange = (newState, action) => {
     const newStateMap = mapStatesToAbbr(newState);
     setCurrentPage(1);
     switch (action) {
       case "add":
-        const newStates = [...selectedStates, newStateMap];
-
-        if (selectedCities.length === 0) {
-          dispatch(
-            searchLocationsRequest({
-              states: [newStateMap],
-            })
-          );
-        } else {
-          selectedCities.forEach((city) => {
-            dispatch(
-              searchLocationsRequest({
-                city: city,
-                states: [newStateMap],
-              })
-            );
-          });
-        }
-        setSelectedStates(newStates);
+        dispatch(addState(newState));
+        dispatch(
+          searchLocationsRequest({
+            states: [newStateMap],
+          })
+        );
         break;
       case "remove":
-        dispatch(removeStateZipCodes(newState));
+        dispatch(removeState(newState));
         setCurrentPage(1);
-        setSelectedStates((prevData) =>
-          prevData.filter((item) => item !== newState)
-        );
         break;
       default:
         break;
@@ -232,8 +217,8 @@ const HomePage: React.FC = () => {
   };
 
   /**
-   * 
-   * @param page 
+   *
+   * @param page
    */
   const handlePageClick = (page) => {
     if (!cachedDogs) {
@@ -310,7 +295,6 @@ const HomePage: React.FC = () => {
         ) : (
           <>
             <CardView dogs={dogList} />
-
             <div className="pagination-container">
               <CustomPagination
                 page={currentPage}

@@ -19,6 +19,13 @@ export const REMOVE_AUTOCOMPLETE_CITIES_REQUEST = "REMOVE_AUTOCOMPLETE_CITIES_RE
 export const REMOVE_AUTOCOMPLETE_CITIES_SUCCESS = "REMOVE_AUTOCOMPLETE_CITIES_SUCCESS";
 export const REMOVE_AUTOCOMPLETE_CITIES_FAILURE = "REMOVE_AUTOCOMPLETE_CITIES_FAILURE";
 
+export const ADD_CITY = "ADD_CITY";
+export const REMOVE_CITY = "REMOVE_CITY";
+
+export const ADD_STATE = "ADD_STATE";
+export const REMOVE_STATE = "REMOVE_STATE";
+export const RESET_ALL_LOCATIONS = "RESET_ALL_LOCATIONS";
+export const CACHE_STATE_LOCATIONS = "CACHE_STATE_LOCATIONS";
 
 // Action Creators
 export const fetchLocationsRequest = (zipCodes) => ({
@@ -95,4 +102,39 @@ export const removeAutocompleteCitiesSuccess = (locations) => ({
 export const removeAutocompleteCitiesFailure = (error) => ({
   type: REMOVE_AUTOCOMPLETE_CITIES_FAILURE,
   payload: error,
+})
+
+export const addState = (state) => ({
+  type: ADD_STATE,
+  payload: state,
+})
+
+export const removeState = (state) => ({
+  type: REMOVE_STATE,
+  payload: state,
+})
+
+export const addCity = (city, state) => ({
+  type: ADD_CITY,
+  payload: {
+    city: city,
+    state: state,
+  },
+})
+
+export const removecity = (city) => ({
+  type: REMOVE_CITY,
+  payload: city,
+})
+
+export const resetAllLocations = () => ({
+  type: RESET_ALL_LOCATIONS,
+})
+
+export const cachedStateLocations = (state, locations) => ({
+  type: CACHE_STATE_LOCATIONS,
+  payload: {
+    state: state,
+    locations: locations,
+  },
 })

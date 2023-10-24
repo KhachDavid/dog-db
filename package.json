@@ -1,5 +1,6 @@
 {
   "name": "web_app",
+  "homepage": "http://fetch.davidk.tech",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
