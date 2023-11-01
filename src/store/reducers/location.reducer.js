@@ -15,6 +15,9 @@ import {
   REMOVE_CITY,
   REMOVE_STATE,
   CACHE_STATE_LOCATIONS,
+  SET_LOCATIONS,
+  SET_USER_LOCATION,
+  SET_GEOBOUNDING_BOX,
 } from "../actions/location.actions";
 import { mapStatesToAbbr } from "../../constants/location.constants";
 
@@ -29,6 +32,10 @@ const initialState = {
   selectedStates: [],
   // cached state locations
   cachedStateLocations: {},
+  tagStack: [],
+  userLat: 41.8781,
+  userLng: -87.6298,
+  geoBoundingBox: {}
 };
 
 const locationsReducer = (state = initialState, action) => {
@@ -140,7 +147,6 @@ const locationsReducer = (state = initialState, action) => {
     case FETCH_LOCATIONS_REQUEST:
       return {
         ...state,
-        loading: true,
         error: null,
       };
     case FETCH_LOCATIONS_SUCCESS:
@@ -158,7 +164,7 @@ const locationsReducer = (state = initialState, action) => {
     case SEARCH_LOCATIONS_REQUEST:
       return {
         ...state,
-        loading: true,
+        loading: action.payload.states,
         error: null,
       };
     case SEARCH_LOCATIONS_SUCCESS:
@@ -207,6 +213,28 @@ const locationsReducer = (state = initialState, action) => {
           [thisState]: action.payload.locations,
         },
       };
+
+    case SET_LOCATIONS:
+      return {
+        ...state,
+        selectedStates: action.payload.states,
+        selectedCities: action.payload.cities,
+        selectedCityStates: action.payload.cityStates,
+        additionalLocations: action.payload.additionalLocations,
+      }
+
+    case SET_USER_LOCATION:
+      return {
+        ...state,
+        userLat: action.payload.lat,
+        userLng: action.payload.lng,
+      }
+
+    case SET_GEOBOUNDING_BOX:
+      return {
+        ...state,
+        geoBoundingBox: action.payload,
+      }
 
     default:
       return state;

@@ -42,6 +42,7 @@ const CustomTextField: React.FC<CustomTextFieldProps> = (props) => {
       type={props.type || "text"}
       value={props.value}
       variant={props.variant || "outlined"}
+      inputProps={{ 'data-testid': props.label }} // Set the testId attribute
     />
   );
 };

@@ -1,15 +1,14 @@
 import { setName, setEmail } from "../../store/actions/auth.actions.js";
 import { isEmailValid } from "./utils";
 import { languages } from "../../languages";
-import {
-  selectLanguage,
-} from "../../store/sagas/selectors.js";
 import { useSelector } from "react-redux";
 
 export const useFormRecipe = () => {
   const name =  useSelector((state) => state.auth.currentName);
   const email =  useSelector((state) => state.auth.currentEmail);
-  const currentLanguage = useSelector(selectLanguage);
+
+  // In case we want to add languages in the future
+  const currentLanguage = "english"
 
   return [
     {

@@ -7,6 +7,7 @@ import {
   manualDogSort,
   searchDogsRequest,
   setDogIds,
+  setSelectedBreeds,
 } from "../../store/actions/dog.actions";
 import {
   selectBreeds,
@@ -19,7 +20,7 @@ import {
   selectDogsCached,
   selectStates,
   selectCities,
-  isLoadingNewLocation,
+  selectSelectedBreeds,
 } from "../../store/sagas/selectors";
 import CustomPagination from "../../components/CustomPagination";
 import CustomSearch from "../../components/CustomSearch";
@@ -31,23 +32,27 @@ import AdvancedSort from "../../components/AdvancedSort";
 import {
   addCity,
   addState,
-  removeCityZipCodes,
   removeState,
-  removeStateZipCodes,
   removecity,
-  resetAllLocations,
   searchLocationsRequest,
 } from "../../store/actions/location.actions";
-import { mapStatesToAbbr } from "../../constants/location.constants";
+import { INVALID_ZIP_CODE, mapStatesToAbbr } from "../../constants/location.constants";
 import { Typography } from "@mui/material";
+import { activateSnackbar } from "../../store/actions/settings.actions";
+
+interface HomePageProps {
+  currentPage: number,
+  setCurrentPage: (newPage: number) => void,
+}
 
 /**
  *
  * @returns
  */
-const HomePage: React.FC = () => {
+const HomePage: React.FC<HomePageProps> = ({currentPage, setCurrentPage}) => {
   const dispatch = useDispatch();
   const dogBreeds = useSelector(selectBreeds);
+
   const dogID = useSelector(selectDogIds);
   const dogList = useSelector(selectDogs);
   const totalDogCount = useSelector(selectDogCount);
@@ -57,11 +62,9 @@ const HomePage: React.FC = () => {
   const cachedDogs = useSelector(selectDogsCached);
   const selectedCities = useSelector(selectCities);
   const selectedStates = useSelector(selectStates);
-  const isLoading = useSelector(isLoadingNewLocation);
+  const selectedBreeds = useSelector(selectSelectedBreeds);
 
-  const [currentPage, setCurrentPage] = useState(1);
   const [selectedSort, setSelectedSort] = useState<string>("breed:asc");
-  const [selectedBreeds, setSelectedBreeds] = useState<string[]>([]);
   const [rerenderKey, setRerenderKey] = useState(0); // Initialize a state variable for triggering a re-render
 
   // Create refs to store the previous values of dependencies
@@ -82,7 +85,6 @@ const HomePage: React.FC = () => {
    *
    */
   useEffect(() => {
-    console.log(isLoading);
     // this is because nextDogs is not already cached
     if (selectedSort !== prevSelectedSort.current && cachedDogs) {
       dispatch(manualDogSort(selectedSort));
@@ -92,11 +94,17 @@ const HomePage: React.FC = () => {
       selectedBreeds.length !== prevSelectedBreeds.current.length ||
       additionalLocations.length !== prevAdditionalLocations.current.length
     ) {
+
       const extraLocations =
         additionalLocations.length > 0
           ? additionalLocations.map((resultObj) => resultObj.zip_code)
           : [];
 
+      if (additionalLocations.length > 0 && additionalLocations[0] === INVALID_ZIP_CODE) {
+        dispatch(activateSnackbar("No Dogs in this area"));
+        return;
+      }
+      
       dispatch(
         searchDogsRequest({
           from: (currentPage - 1) * dogBatchCount,
@@ -132,7 +140,7 @@ const HomePage: React.FC = () => {
    *
    */
   useEffect(() => {
-    dispatch(fetchDogsRequest());
+    dispatch(fetchDogsRequest(dogID));
   }, [dispatch, dogID]);
 
   /**
@@ -143,13 +151,12 @@ const HomePage: React.FC = () => {
   const handleBreedChange = (newBreed, action) => {
     switch (action) {
       case "add":
-        setSelectedBreeds([...selectedBreeds, newBreed]);
+        dispatch(setSelectedBreeds([...selectedBreeds, newBreed]));
         break;
       case "remove":
         setCurrentPage(1);
-        setSelectedBreeds((prevData) =>
-          prevData.filter((item) => item !== newBreed)
-        );
+        let newBreeds = selectedBreeds.filter((item) => item !== newBreed);
+        dispatch(setSelectedBreeds(newBreeds));
         break;
 
       default:

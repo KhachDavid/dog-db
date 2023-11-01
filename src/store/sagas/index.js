@@ -2,6 +2,7 @@ import { all, call, spawn } from 'redux-saga/effects';
 import dogSaga from './dog.saga';
 import authSaga from './auth.saga';
 import locationSaga from './location.saga';
+import settingsSaga from './settings.saga';
 
 function errorHandler(error) {
   console.log(error);
@@ -26,6 +27,7 @@ export default function* rootSaga() {
     { saga: authSaga, errorHandler },
     { saga: dogSaga, errorHandler },
     { saga: locationSaga, errorHandler },
+    { saga: settingsSaga, errorHandler},
   ];
 
   yield all(spawnSagasList(sagaList));

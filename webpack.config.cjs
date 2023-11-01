@@ -1,13 +1,12 @@
 const path = require("path");
 const sass = require("sass");
 
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = process.env.NODE_ENV === "production";
 
 module.exports = {
   mode: "development",
   entry: path.resolve(__dirname, "./src/index.js"),
-  //devtool: process.env.NODE_ENV === "development" ? "eval-source-map" : false,
-  devtool: "eval-source-map",
+  devtool: process.env.NODE_ENV === "development" ? "eval-source-map" : false,
   module: {
     rules: [
       {
@@ -15,7 +14,7 @@ module.exports = {
         exclude: /node_modules/,
         use: ["babel-loader"],
       },
-      {        
+      {
         test: /\.(scss|css|sass)$/,
         use: [
           {
@@ -46,9 +45,9 @@ module.exports = {
       {
         test: /\.(jpg|jpeg|png|gif|svg)$/,
         use: {
-          loader: 'file-loader',
+          loader: "file-loader",
           options: {
-            name: 'images/[name].[ext]', // Output path and filename format
+            name: "images/[name].[ext]", // Output path and filename format
           },
         },
       },
@@ -67,6 +66,6 @@ module.exports = {
   },
   performance: {
     maxEntrypointSize: 512000,
-    maxAssetSize: 512000
-  },    
+    maxAssetSize: 512000,
+  },
 };

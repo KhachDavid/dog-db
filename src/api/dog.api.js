@@ -27,6 +27,10 @@ export const searchDogs = (queryParams, thisDogBatchCount = dogBatchCount) => {
 };
 
 export const fetchDogsByIds = (dogIds) => {
+  if (!Array.isArray(dogIds) || dogIds.length > 100) {
+    throw new Error('dogIds must be an array containing no more than 100 ZIP codes.');
+  }
+
   return axiosInstance.post(`${BASE_URL}${endpoints.dogs.post}`, dogIds);
 };
 

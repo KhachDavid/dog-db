@@ -11,7 +11,7 @@ import {
 } from "../actions/auth.actions";
 
 import { persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage"; // You can choose the storage method you prefer
+import storage from "redux-persist/lib/storage";
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 
 const persistConfig = {
@@ -62,11 +62,13 @@ const authReducer = (state = initialState, action) => {
         loading: false,
       };
     case SET_FULL_NAME:
+      console.log("SET NAME")
       return {
         ...state,
         currentName: action.payload,
       };
     case SET_EMAIL:
+      console.log("SET_EMAIl")
       return {
         ...state,
         currentEmail: action.payload,

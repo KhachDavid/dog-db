@@ -1,15 +1,15 @@
 import React, { useState } from "react";
+import BookmarkAddIcon from "@mui/icons-material/BookmarkAdd";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import Chip from "@mui/material/Chip";
 import Box from "@mui/material/Box";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
-import { TextFieldSX } from "../CustomTextField/style";
-import CustomSnackbar from "../CustomSnackbar";
-import { Tooltip } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import "./styles.scss";
+import { theme, error, errorColor } from "../../styles/_styles.scss";
 import {
   USstates,
   cityAutocompleteLimit,
@@ -19,9 +19,20 @@ import {
 import {
   getAutocompleteCities,
   removeAutocompleteCities,
+  resetAllLocations,
   searchLocationsRequest,
 } from "../../store/actions/location.actions";
-import { selectStateCities } from "../../store/sagas/selectors";
+import {
+  selectStateCities,
+  selectCityStates,
+  selectAdditionalLocations,
+  selectTagStack,
+} from "../../store/sagas/selectors";
+import {
+  activateSnackbar,
+  addSavedSearch,
+} from "../../store/actions/settings.actions";
+import { setTagStack } from "../../store/actions/filter.actions";
 
 interface AutocompleteSearchProps {
   dogBreeds: string[];
@@ -32,8 +43,6 @@ interface AutocompleteSearchProps {
   onStatesChange: (arg0: string[], arg1: "add" | "remove") => void;
   onCityChange: (arg0: string[], arg1: "add" | "remove") => void;
 }
-
-const tagStack = [];
 
 const AutocompleteSearch: React.FC<AutocompleteSearchProps> = ({
   dogBreeds,
@@ -48,30 +57,39 @@ const AutocompleteSearch: React.FC<AutocompleteSearchProps> = ({
   const [inputValue, setInputValue] = useState<string>("");
 
   const stateCities = useSelector(selectStateCities);
-
-  // Snackbar
-  const [open, setOpen] = useState(false);
-  const [message, setMessage] = useState("");
+  const selectedCityStates = useSelector(selectCityStates);
+  const additionalLocations = useSelector(selectAdditionalLocations);
+  const tagStack = useSelector(selectTagStack);
 
   const handleTagSelection = (event, newValue) => {
     // don't let the user select tags with the keyboard
     // to avoid rapid api calls
     if (event?.key === "Backspace") {
-      alert("Back")
+      // manually remove if backspace was hit
+      const newTagStack = tagStack.shift();
+      handleTagRemoved(newTagStack);
+      dispatch(setTagStack(tagStack));
+      return;
+    } else if (
+      event.target.classList &&
+      event?.target?.classList?.contains("reset-search")
+    ) {
+      dispatch(resetAllLocations());
       return;
     }
 
-    const newVal = newValue[newValue.length - 1];
+    let newVal = newValue[newValue.length - 1];
     if (dogBreeds.includes(newVal)) {
       onBreedChange(newVal, "add");
     } else if (USstates.some((x) => x.toLowerCase() === newVal.toLowerCase())) {
       if (selectedStates.length === 5) {
-        setMessage("Cannot select more than 5 states");
-        setOpen(true);
-        setTimeout(() => {
-          setOpen(false);
-          setMessage("");
-        }, 5000);
+        dispatch(
+          activateSnackbar(
+            "Cannot add more than 5 states at once",
+            "left",
+            "top"
+          )
+        );
         return;
       }
       dispatch(
@@ -83,7 +101,11 @@ const AutocompleteSearch: React.FC<AutocompleteSearchProps> = ({
       onStatesChange(newVal, "add");
     } else if (/[a-zA-Z]/.test(newVal)) {
       onCityChange(newVal, "add");
+
+      newVal = newVal.split(",")[0];
     }
+    const newTagStack = [newVal, ...tagStack];
+    dispatch(setTagStack(newTagStack));
   };
 
   const handleTagRemoved = (removedTag) => {
@@ -98,6 +120,16 @@ const AutocompleteSearch: React.FC<AutocompleteSearchProps> = ({
     ) {
       dispatch(removeAutocompleteCities(removedTag));
       onStatesChange(removedTag, "remove");
+    }
+
+    const removedTagIndex = tagStack.indexOf(removedTag);
+
+    if (removedTagIndex !== -1) {
+      // If the removed tag is found in tagStack, remove it
+      tagStack.splice(removedTagIndex, 1);
+
+      // Dispatch the updated tagStack array
+      dispatch(setTagStack(tagStack));
     }
   };
 
@@ -120,8 +152,7 @@ const AutocompleteSearch: React.FC<AutocompleteSearchProps> = ({
     }
   };
 
-  const value = selectedBreeds.concat(selectedCities, selectedStates);
-  const options = [...dogBreeds, ...stateCities, ...stateFullNames];
+  const options = [...dogBreeds, ...stateFullNames, ...stateCities];
 
   const renderNoOptions = () => {
     if (inputValue.length === 0) {
@@ -143,12 +174,28 @@ const AutocompleteSearch: React.FC<AutocompleteSearchProps> = ({
     return option === value;
   };
 
+  const handleSave = () => {
+    dispatch(
+      addSavedSearch(
+        selectedBreeds,
+        selectedCities,
+        selectedStates,
+        selectedCityStates,
+        additionalLocations,
+        tagStack
+      )
+    );
+  };
+
   return (
     <Box display="flex" flexDirection="row" alignItems="center">
       <Box mt={2}></Box>
       <Autocomplete
         clearOnBlur={false} // Prevent Autocomplete from clearing input on blur
         multiple
+        classes={{
+          clearIndicator: "reset-search",
+        }}
         id="tags-search"
         options={options}
         inputValue={inputValue}
@@ -156,7 +203,27 @@ const AutocompleteSearch: React.FC<AutocompleteSearchProps> = ({
         isOptionEqualToValue={isOptionEqualToValue}
         getOptionLabel={(option) => option}
         onChange={handleTagSelection}
-        value={value}
+        value={tagStack}
+        sx={{
+          width: "100%",
+          ".MuiInputBase-root": {
+            padding: "9px !important",
+          },
+          "& .MuiOutlinedInput-root": {
+            // normal state
+            "& fieldset": {
+              borderColor: error ? errorColor : theme,
+            },
+            // hover state
+            "&:hover fieldset": {
+              borderColor: error ? errorColor : theme,
+            },
+            // focused state
+            "&.Mui-focused fieldset": {
+              borderColor: error ? errorColor : theme,
+            },
+          },
+        }}
         renderTags={(value, getTagProps) => {
           const numTags = value.length;
           const limitTags = 5;
@@ -189,14 +256,41 @@ const AutocompleteSearch: React.FC<AutocompleteSearchProps> = ({
           );
         }}
         renderInput={(params) => (
-          <TextField
-            {...params}
-            variant="outlined"
-            label="Search"
-            placeholder="Breeds, State, City"
-            sx={TextFieldSX(false)} // never in error
-            style={{ width: "300px" }}
-          />
+          <div>
+            <TextField
+              {...params}
+              variant="outlined"
+              label="Search"
+              placeholder="Breeds, State, City"
+              style={{ width: "300px" }}
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <>
+                    {(selectedBreeds.length > 0 ||
+                      selectedStates.length > 0 ||
+                      selectedCities.length > 0) && (
+                      <div style={{ position: "relative" }}>
+                        <Tooltip placement="top" title="Save Current Search">
+                          <IconButton onClick={() => handleSave()}>
+                            <BookmarkAddIcon
+                              style={{
+                                borderTopLeftRadius: "4px",
+                                borderBottomLeftRadius: "4px",
+                                height: "100%",
+                                display: "flex",
+                                alignItems: "center",
+                              }}
+                            />
+                          </IconButton>
+                        </Tooltip>
+                      </div>
+                    )}
+                  </>
+                ),
+              }}
+            />
+          </div>
         )}
         noOptionsText={renderNoOptions()}
         renderOption={(props, option) => {
@@ -238,15 +332,7 @@ const AutocompleteSearch: React.FC<AutocompleteSearchProps> = ({
             </li>
           );
         }}
-        
       />
-      <div>
-        <CustomSnackbar
-          open={open}
-          message={message}
-          handleClose={() => setOpen(false)}
-        />
-      </div>
     </Box>
   );
 };

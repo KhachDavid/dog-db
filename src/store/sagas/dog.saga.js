@@ -10,11 +10,18 @@ import {
   FETCH_DOGS_REQUEST,
   fetchDogsFailure,
   fetchDogsSuccess,
+  MATCH_DOGS_REQUEST,
+  ADD_FAVORITES_REQUEST,
+  addFavoritesSuccess,
+  matchDogsSuccess,
+  matchDogsFailure,
 } from "../actions/dog.actions";
 import { logoutSuccess } from "../actions/auth.actions";
-import { selectDogIds } from "./selectors";
+import { selectFavorites } from "./selectors";
 import { zipCodeSlice } from "../../constants/location.constants";
 import { dogBatchCount } from "../../constants/dog.constants";
+import { activateSnackbar } from "../actions/settings.actions";
+
 
 function* fetchBreedsSaga() {
   try {
@@ -142,21 +149,51 @@ function* searchDogsSaga(action) {
   }
 }
 
-function* fetchDogsByIds() {
+function* fetchDogsByIds(action) {
   try {
-    const dogIds = yield select(selectDogIds);
+    const dogIds = action.payload;
     const response = yield call(api.fetchDogsByIds, dogIds);
 
     yield put(fetchDogsSuccess(response.data));
   } catch (error) {
+    if (error?.response?.status === 401) {
+      yield put(logoutSuccess());
+    }
+
     yield put(fetchDogsFailure(error));
   }
 }
 
-// Define other sagas for different actions...
+function* matchDogsSaga() {
+  try {
+    const dogIDs = yield select(selectFavorites);
+    const response = yield call(api.matchDog, dogIDs);
+    const id = response.data.match;
+    yield put(matchDogsSuccess(id));
+  } catch (error) {
+    yield put(matchDogsFailure(error));
+  }
+}
+
+function* addFavoritesSaga(action) {
+  try {
+    const dogIDs = yield select(selectFavorites);
+    if (dogIDs.length >= 100) {
+      yield put(activateSnackbar("Cannot have more than 100 favorite dogs"))
+      return;
+    }
+    else {
+      yield put(addFavoritesSuccess(action.payload))
+    }
+  } catch (error) {
+
+  }
+}
 
 export default function* () {
   yield takeLatest(FETCH_BREEDS_REQUEST, fetchBreedsSaga);
   yield takeLatest(SEARCH_DOGS_REQUEST, searchDogsSaga);
   yield takeLatest(FETCH_DOGS_REQUEST, fetchDogsByIds);
+  yield takeLatest(MATCH_DOGS_REQUEST, matchDogsSaga);
+  yield takeLatest(ADD_FAVORITES_REQUEST, addFavoritesSaga);
 }

@@ -42,11 +42,12 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
             color: theme,
             "&:hover": {
                 backgroundColor: theme,
-                color: "#fff",
+                color: "#fff !important",
                 borderColor: "#fff",
               },
           }}
           label="&lt;&lt;"
+          solidBorder
         />
       )}
       {/* Display page CustomButtons for the current group */}
@@ -62,14 +63,15 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
             borderRadius: "8px",
             borderColor: theme,
             backgroundColor: pageNumber === page ? theme : "#fff",
-            color: pageNumber === page ? "#fff" : theme,
+            color: pageNumber === page ? "#fff !important" : theme,
             "&:hover": {
                 backgroundColor: theme,
-                color: "#fff",
-                borderColor: "#fff",
+                color: "#fff !important",
+                borderColor: "#fff !important",
               },
           }}
           label={pageNumber.toString()}
+          solidBorder
         />
       ))}
       {/* Display next CustomButton if not on the last page group */}
@@ -87,11 +89,12 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
             color: theme,
             "&:hover": {
                 backgroundColor: theme,
-                color: "#fff",
+                color: "#fff !important",
                 borderColor: "#fff",
               },
           }}
           label="&gt;&gt;"
+          solidBorder
         />
       )}
     </>

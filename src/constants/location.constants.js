@@ -273,3 +273,4 @@ export function mapStatesToAbbr(stateName) {
 export const cityAutocompleteLimit = 1000;
 export const zipCodeFromLocationSize = 10000;
 export const zipCodeSlice = 100;
+export const INVALID_ZIP_CODE = "00000"

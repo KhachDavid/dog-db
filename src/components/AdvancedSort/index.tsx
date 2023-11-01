@@ -87,7 +87,7 @@ export default function AdvancedSort({ selectedSort, changeSelectedSort }) {
               <ArrowDownward /> Age: High to Low
             </div>
           </MenuItem>
-          <MenuItem
+          {/*<MenuItem
             sx={{ display: "flex", alignItems: "center" }}
             value="useMap"
           >
@@ -96,7 +96,7 @@ export default function AdvancedSort({ selectedSort, changeSelectedSort }) {
             </div>
             {selectedSort !== "useMap" && (
               <div className="right-side">
-                <Tooltip title="Location Access Required">
+                <Tooltip title="Location Access Required" placement="top">
                   <IconButton
                     size="small"
                     aria-label="Location Access Required"
@@ -106,7 +106,7 @@ export default function AdvancedSort({ selectedSort, changeSelectedSort }) {
                 </Tooltip>
               </div>
             )}
-          </MenuItem>
+          </MenuItem>*/}
         </Select>
       </FormControl>
     </div>

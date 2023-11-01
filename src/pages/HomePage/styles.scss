@@ -157,3 +157,16 @@
 .blurry-bg {
   backdrop-filter: blur(10px); /* Adjust the blur strength as needed */
 }
+
+/* Use media queries to change the layout for smaller screens */
+@media (max-width: 768px) {
+  .filter-container {
+    flex-direction: column; /* Stack elements vertically on smaller screens */
+  }
+
+  .left-side,
+  .right-side {
+    flex: auto; /* Take up the full width of the container on smaller screens */
+    padding: 10px; /* Add padding to create spacing between elements */
+  }
+}

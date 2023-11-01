@@ -25,6 +25,7 @@ import { logoutSuccess } from "../actions/auth.actions";
 
 import * as api from "../../api/location.api";
 import {
+  INVALID_ZIP_CODE,
   cityAutocompleteLimit,
   mapStatesToAbbr,
 } from "../../constants/location.constants";
@@ -69,9 +70,18 @@ function* searchLocationsSaga(action) {
       return;
     }
 
-    yield put(
-      searchLocationsSuccess(alternateConcat(newData, filteredResults))
-    );
+    if (action.payload.geoBoundingBox) {
+      // if newData is empty 
+      if (newData.length === 0) {
+        newData = [INVALID_ZIP_CODE]
+      }
+
+      yield put(searchLocationsSuccess(newData));
+    } else {
+      yield put(
+        searchLocationsSuccess(alternateConcat(newData, filteredResults))
+      );
+    }
     yield put(dogsNotCached());
   } catch (error) {
     const { status } = error.response;

@@ -1,0 +1,16 @@
+/* styles.css */
+.dark-background {
+  background-color: rgba(
+    0,
+    0,
+    0,
+    0.5
+  ); /* A semi-transparent black background */
+  /* You can adjust the background color and opacity as needed */
+  position: relative;
+}
+
+/* Ensure the grid is properly positioned */
+.dark-background > .MuiGrid-root {
+  position: static;
+}
