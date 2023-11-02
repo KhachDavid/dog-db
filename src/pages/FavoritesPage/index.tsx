@@ -10,6 +10,10 @@ import {
 import { Typography } from "@mui/material";
 import CustomButton from "../../components/CustomButton";
 
+/**
+ * This component is a minimized version of the homepage
+ * It shows the dogs that are in the favorites list
+ */
 const FavoritesPage: React.FC = () => {
   const dogID = useSelector(selectFavorites);
   const dispatch = useDispatch();

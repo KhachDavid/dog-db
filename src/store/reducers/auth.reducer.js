@@ -62,13 +62,11 @@ const authReducer = (state = initialState, action) => {
         loading: false,
       };
     case SET_FULL_NAME:
-      console.log("SET NAME")
       return {
         ...state,
         currentName: action.payload,
       };
     case SET_EMAIL:
-      console.log("SET_EMAIl")
       return {
         ...state,
         currentEmail: action.payload,

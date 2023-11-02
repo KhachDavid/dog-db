@@ -82,7 +82,8 @@ const HomePage: React.FC<HomePageProps> = ({currentPage, setCurrentPage}) => {
   }, [dispatch]);
 
   /**
-   *
+   * This function handles all the dog updates
+   * The first condition does manual sort if dogs are already cached
    */
   useEffect(() => {
     // this is because nextDogs is not already cached
@@ -137,14 +138,14 @@ const HomePage: React.FC<HomePageProps> = ({currentPage, setCurrentPage}) => {
   ]);
 
   /**
-   *
+   * When ID's are updated, go look for dog details
    */
   useEffect(() => {
     dispatch(fetchDogsRequest(dogID));
   }, [dispatch, dogID]);
 
   /**
-   *
+   * Reset dogs when the user adds a new breed in the search
    * @param newBreed
    * @param action
    */
@@ -165,7 +166,7 @@ const HomePage: React.FC<HomePageProps> = ({currentPage, setCurrentPage}) => {
   };
 
   /**
-   *
+   * Reset dogs when the user adds a new city in the search
    * @param newCity
    * @param action
    * @returns
@@ -198,7 +199,7 @@ const HomePage: React.FC<HomePageProps> = ({currentPage, setCurrentPage}) => {
   };
 
   /**
-   *
+   * Reset dogs when the user adds a new state in the search
    * @param newState
    * @param action
    */
@@ -224,8 +225,10 @@ const HomePage: React.FC<HomePageProps> = ({currentPage, setCurrentPage}) => {
   };
 
   /**
-   *
-   * @param page
+   * Either update the page
+   * If we have cached dogs
+   * Loop over the cached dogs linked list and find the according page
+   * @param page is the number of the page to display 
    */
   const handlePageClick = (page) => {
     if (!cachedDogs) {

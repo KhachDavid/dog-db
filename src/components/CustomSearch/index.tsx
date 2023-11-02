@@ -135,9 +135,9 @@ const AutocompleteSearch: React.FC<AutocompleteSearchProps> = ({
 
   const handleInputChange = (event, newInputValue) => {
     if (event !== null) {
-      const updatedOptions = options.filter((option) =>
+      const updatedOptions = Array.isArray(options) ? options.filter((option) =>
         option.toLowerCase().includes(newInputValue.toLowerCase())
-      );
+      ) : [];
 
       // if we have less than 5 options start searching the input as a city
       if (updatedOptions.length < 5) {
@@ -152,7 +152,11 @@ const AutocompleteSearch: React.FC<AutocompleteSearchProps> = ({
     }
   };
 
-  const options = [...dogBreeds, ...stateFullNames, ...stateCities];
+  const options = [
+    ...(Array.isArray(dogBreeds) ? dogBreeds : []),
+    ...(Array.isArray(stateFullNames) ? stateFullNames : []),
+    ...(Array.isArray(stateCities) ? stateCities : []),
+  ];
 
   const renderNoOptions = () => {
     if (inputValue.length === 0) {

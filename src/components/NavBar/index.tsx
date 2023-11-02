@@ -5,7 +5,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import LogoutIcon from "@mui/icons-material/Logout";
 import HomeIcon from "@mui/icons-material/Home";
-import LocationOnIcon from '@mui/icons-material/LocationOn';
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 import {
   AppBar,
   Toolbar,
@@ -23,22 +23,29 @@ import { logoutRequest } from "../../store/actions/auth.actions";
 import { styled } from "@mui/material/styles";
 import { theme } from "../../styles/_styles.scss";
 import CustomButton from "../CustomButton";
-import { selectGeoBoundingBox, selectSavedSearches, selectUser } from "../../store/sagas/selectors";
-import SavedSearchContent from "../SavedSearchContent";
 import {
-  removeSavedSearch,
-} from "../../store/actions/settings.actions";
+  selectGeoBoundingBox,
+  selectSavedSearches,
+  selectUser,
+} from "../../store/sagas/selectors";
+import SavedSearchContent from "../SavedSearchContent";
+import { removeSavedSearch } from "../../store/actions/settings.actions";
 import CustomMap from "../CustomMap";
-import { searchLocationsRequest, setUserLocation } from "../../store/actions/location.actions";
+import {
+  searchLocationsRequest,
+  setUserLocation,
+} from "../../store/actions/location.actions";
 
 interface NavbarProps {
-  setCurrentPage: (pageNumber: number) => void,
+  // when a map search is submitted, reset the current search
+  setCurrentPage: (pageNumber: number) => void;
 }
 
 const StyledAppBar = styled(AppBar)`
   background-color: ${theme};
   position: sticky;
   padding-right: 0 !important;
+  z-index: 2;
 `;
 
 const styles = {
@@ -47,6 +54,9 @@ const styles = {
   },
 };
 
+/**
+ * This component loads the icons in the top navbar
+ */
 const Navbar: React.FC<NavbarProps> = ({ setCurrentPage }) => {
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
@@ -98,14 +108,20 @@ const Navbar: React.FC<NavbarProps> = ({ setCurrentPage }) => {
 
   const handleMapSearch = () => {
     setCurrentPage(1);
-    dispatch(searchLocationsRequest({geoBoundingBox: geoBoundingBox}));
+    dispatch(searchLocationsRequest({ geoBoundingBox: geoBoundingBox }));
     handleMapSearchClose();
   };
 
-
   return (
     <StyledAppBar>
-      <Toolbar style={{ position: "sticky", top: 0, backgroundColor: theme, zIndex: 1000 }}>
+      <Toolbar
+        style={{
+          position: "sticky",
+          top: 0,
+          backgroundColor: theme,
+          zIndex: 1000,
+        }}
+      >
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Tooltip placement="top" title="Home">
             <IconButton style={styles.whiteIcon} component={Link} to="/">
@@ -211,7 +227,7 @@ const Navbar: React.FC<NavbarProps> = ({ setCurrentPage }) => {
         </DialogContent>
         <DialogActions>
           <CustomButton onClick={handleMapSearchClose} label="Close" />
-          <CustomButton onClick={handleMapSearch} label="Search This Area"/>
+          <CustomButton onClick={handleMapSearch} label="Search This Area" />
         </DialogActions>
       </Dialog>
     </StyledAppBar>

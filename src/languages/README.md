@@ -1,13 +1,6 @@
 # Language Documentation
 
-The form supports 3 languages
-
-* Armenian
-* English
-* Russian
-* Spanish
-
-English is the default language. Since I speak these languages, I decided to add them only to make sure that the terms are correct. However, the process of adding languages is very simple, given the modular structure. Here is a concise 4 step guide.
+English is the default language. No other languages supported yet
 
 ## Step 1
 

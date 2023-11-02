@@ -107,7 +107,7 @@ const CustomCard: React.FC<CustomCardProps> = ({
   }, [isModalOpen]);
 
   // Check if the current dogId is in the favorites array
-  const isFavorite = favorites.includes(dog.id);
+  const isFavorite = favorites ? favorites.includes(dog.id) : false;
   const dispatch = useDispatch();
 
   return (
@@ -153,7 +153,7 @@ const CustomCard: React.FC<CustomCardProps> = ({
                 placement="top"
               >
                 <IconButton
-                  aria-label="Add to favorites"
+                  aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
                   onClick={(e) => {
                     e.stopPropagation(); // Prevent card click event from propagating
                     isFavorite
