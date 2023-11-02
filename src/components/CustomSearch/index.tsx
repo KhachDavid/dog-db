@@ -44,6 +44,12 @@ interface AutocompleteSearchProps {
   onCityChange: (arg0: string[], arg1: "add" | "remove") => void;
 }
 
+/**
+ * Customized MUI autocomplete search
+ * This component adds 3 types of options to the search
+ * Breed | City | State
+ * Upon the selection of one component, it is being added as a tag
+*/
 const AutocompleteSearch: React.FC<AutocompleteSearchProps> = ({
   dogBreeds,
   selectedBreeds,

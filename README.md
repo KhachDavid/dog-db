@@ -10,7 +10,7 @@ Ideally, run it with node:16.13.1 and npm:9.5.1
 
 In the project directory, you can run:
 
-### `npm i`
+### `npm i --force`
 
 Installs the necessary dependencies
 
