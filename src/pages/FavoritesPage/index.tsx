@@ -32,11 +32,13 @@ const FavoritesPage: React.FC = () => {
     <div className="dog-view-container">
       <div className="filter-container">
         <div className="left-side">
-          <CustomButton
-            label="Find me a Match!"
-            onClick={() => dispatch(matchDogsRequest())}
-            solidBorder
-          />
+          {dogList.length > 0 && (
+            <CustomButton
+              label="Find me a Match!"
+              onClick={() => dispatch(matchDogsRequest())}
+              solidBorder
+            />
+          )}
         </div>
       </div>
       <div className="content-container">
