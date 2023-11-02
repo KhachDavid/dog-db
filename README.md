@@ -1,6 +1,8 @@
 # Getting Started with the Dog Database
 
-Available at [app.davidk.tech](https://davidk.tech)
+LIVE at [app.davidk.tech](https://davidk.tech)
+
+Watch the demo [here](https://www.youtube.com/watch?v=i753uj8Ubjk&ab_channel=Linguaholic)
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
