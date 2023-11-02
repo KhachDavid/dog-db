@@ -95,17 +95,9 @@
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/src/test/fileMock.js",
       "\\.(scss|sass|css)$": "identity-obj-proxy"
     },
-    "testPathIgnorePatterns": [
-      "<rootDir>/node_modules/"
-    ],
-    "transformIgnorePatterns": [
-      "node_modules/(?!axios)/"
-    ],
-    "transform": {
-      "^.+\\.(tsx|jsx|js|ts)?$": "babel-jest"
-    },
-    "setupFilesAfterEnv": [
-      "<rootDir>/src/test/setupTests.js"
-    ]
+    "testMatch": ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
+    "testEnvironment": "node",
+    "setupFiles": ["<rootDir>/src/test/setupTests.js"],
+    "modulePaths": ["<rootDir>/src"]
   }
 }

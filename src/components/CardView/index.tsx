@@ -43,7 +43,7 @@ const CardView: React.FC<CardViewProps> = ({ dogs }) => {
   return (
     <Suspense fallback={<CircularProgress />}>
       {(isLoading || isLoadingDoggies) ? (
-        <div style={centerStyle}>
+        <div style={centerStyle} data-testid="loading-spinner">
           <DogAnimation />
           <CircularProgress />
         </div>

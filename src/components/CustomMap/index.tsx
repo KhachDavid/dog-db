@@ -30,7 +30,6 @@ const CustomMap = () => {
   function Drag() {
     const map = useMapEvents({
       dragend: (e) => {
-        //console.log("mapCenter", e.target.getCenter())
         updateRectangleBounds(map.getBounds());
       },
       moveend: (e) => {

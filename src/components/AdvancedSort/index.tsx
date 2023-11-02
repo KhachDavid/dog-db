@@ -87,26 +87,6 @@ export default function AdvancedSort({ selectedSort, changeSelectedSort }) {
               <ArrowDownward /> Age: High to Low
             </div>
           </MenuItem>
-          {/*<MenuItem
-            sx={{ display: "flex", alignItems: "center" }}
-            value="useMap"
-          >
-            <div className="left-side">
-              <LocationOn /> Closest to Me
-            </div>
-            {selectedSort !== "useMap" && (
-              <div className="right-side">
-                <Tooltip title="Location Access Required" placement="top">
-                  <IconButton
-                    size="small"
-                    aria-label="Location Access Required"
-                  >
-                    <HelpOutline />
-                  </IconButton>
-                </Tooltip>
-              </div>
-            )}
-          </MenuItem>*/}
         </Select>
       </FormControl>
     </div>

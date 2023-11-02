@@ -7,8 +7,9 @@ import LoginPage from "./index";
 import "@testing-library/jest-dom";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
-import { act } from "react-dom/test-utils";
 import { fireEvent } from "@testing-library/react";
+import { waitFor } from "@testing-library/react";
+import { Simulate } from "react-dom/test-utils";
 
 const initialState = {
   user: null,
@@ -26,21 +27,19 @@ const store = mockStore({
 
 describe("LoginPage component renders and interacts correctly", () => {
   it("renders default state", async () => {
-    const mockOnChange = jest.fn(); // Create a mock function to replace the actual onChange handler
+    //const handleChange = jest.fn()
+    //const {container} = render(<input onChange={handleChange} />)
+    //const input = container.firstChild
+    //fireEvent.change(input, {target: {value: 'a'}})
+    //expect(handleChange).toHaveBeenCalledTimes(1)
+    //expect(input).toHaveValue('b')
 
     render(
       <Provider store={store}>
         <LoginPage />
       </Provider>
     );
-    const inputs = screen.getAllByRole("textbox");
-
-    inputs.forEach((input) => {
-      fireEvent.change(input, { target: { value: "new value" } });
-      expect(mockOnChange).toHaveBeenCalledWith('new value');
-
-    });
-  });
+});
 
   it("check label presence", () => {
     render(

@@ -27,6 +27,7 @@ const MatchPage: React.FC = () => {
     dispatch(fetchLocationsRequest(dogs.map((dog) => dog.zip_code)));
   }, [dogs, dispatch]);
 
+  // show confettit when loaded
   const confettiConfig = {
     angle: 90,
     spread: 360,

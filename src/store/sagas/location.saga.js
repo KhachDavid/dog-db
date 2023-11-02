@@ -109,7 +109,6 @@ function* fetchLocationsSaga(action) {
       yield put(fetchLocationsFailure(response));
     }
   } catch (error) {
-    console.log(error);
     const { status } = error.response;
     if (status === 401) {
       // if no longer authorized, log the user out
@@ -145,8 +144,6 @@ function* removeStateZipCodesSaga(action) {
 
 function* getAutocompleteCitiesSaga(action) {
   const response = yield call(api.searchLocations, action.payload);
-  console.log(response);
-
   const results = response.data.results;
   const uniqueCities = new Set();
 
