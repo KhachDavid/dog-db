@@ -34,7 +34,7 @@ import {
 } from "../../store/actions/settings.actions";
 import { setTagStack } from "../../store/actions/filter.actions";
 
-interface AutocompleteSearchProps {
+interface CustomSearchProps {
   dogBreeds: string[];
   selectedBreeds: string[];
   selectedStates: string[];
@@ -50,7 +50,7 @@ interface AutocompleteSearchProps {
  * Breed | City | State
  * Upon the selection of one component, it is being added as a tag
 */
-const AutocompleteSearch: React.FC<AutocompleteSearchProps> = ({
+const CustomSearch: React.FC<CustomSearchProps> = ({
   dogBreeds,
   selectedBreeds,
   selectedStates,
@@ -347,4 +347,4 @@ const AutocompleteSearch: React.FC<AutocompleteSearchProps> = ({
   );
 };
 
-export default AutocompleteSearch;
+export default CustomSearch;
