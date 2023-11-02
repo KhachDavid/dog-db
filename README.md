@@ -78,3 +78,9 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+### Known Issues
+
+1. This website doesn't perform well in the safari browser
+2. The CustomSearch component is overloaded. Needs to be split into parts
+3. The searching concept of state, city, breed is not futureproof. Needs to be changed to handle any given amount of types to accommodate for future changes. 
