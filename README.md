@@ -1,6 +1,6 @@
 # Getting Started with the Dog Database
 
-Available at [app.davidk.tech](https://app.davidk.tech)
+Available at [app.davidk.tech](https://davidk.tech)
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
