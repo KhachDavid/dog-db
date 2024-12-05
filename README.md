@@ -1,6 +1,6 @@
 # Getting Started with the Dog Database
 
-LIVE at [app.davidk.tech](https://davidk.tech)
+LIVE at [davidk.tech/dog-db](https://davidk.tech/dog-db)
 
 Watch the demo [here](https://www.youtube.com/watch?v=i753uj8Ubjk&ab_channel=Linguaholic)
 
